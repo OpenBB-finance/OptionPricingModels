@@ -11,6 +11,7 @@
 % Useful packages
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{csquotes}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \DeclareMathOperator{\Var}{Var}
 \DeclareMathOperator{\E}{E}
@@ -200,9 +201,10 @@ where $x = \frac{\log\left(\frac{S}{Kr^{-t}}\right)}{\sigma t^{\frac{1}{2}}} + \
 To get the Cox-Ross jump process model, we set $u$, $d$, and $q$ to the following values:
 \begin{gather*}
     u = u \\
-    d = \exp\left(\xi\left(\frac{t}{n}\right)\right) \\
+    d = \exp\left(\zeta \left(\frac{t}{n}\right)\right) \\
     q = \lambda \left(\frac{t}{n}\right) \\
 \end{gather*}
+where $\lambda$ is the intensity function (or rate) of the underlying Poisson process and $\zeta$ is related to the intensity measure of the distribution.\\
 The central limit theorem no longer holds for these values and the stock price converges to a log-Poisson distribution as $n -> \infty$. This complementary Poisson distribution can be expressed in the following form:
 \begin{equation}
     \psi (x,y) = \sum_{i=x}^{\infty} \frac{e^{-y}y^{i}}{i!}
@@ -323,4 +325,160 @@ or in discrete form (note \ref{eq:24})
 \begin{equation} \label{eq:32}
     \Delta f = \left[\frac{\partial f }{\partial S} \mu S + \frac{\partial f }{\partial t} + \frac{1}{2}\frac{\partial^{2} f }{\partial S^{2}} * \sigma^{2} S^{2}\right]\Delta t + \frac{\partial f }{\partial S} \sigma S \Delta z
 \end{equation}
+In the discrete form of the Brownian process, 
+\begin{equation}\label{eq:33}
+        \Delta S = \mu S \Delta t + \sigma S \Delta z
+    \end{equation}
+As mentioned in the section about Ito’s lemma, \ref{eq:26} and \ref{eq:27} have the same Wiener process, thus we get that $f$ and $S$ follow the same Wiener process! We can therefore say $\Delta z = \sigma \epsilon (\Delta t)^{\frac{1}{2}}$ see \ref{eq:24} in the formulas \ref{eq:32} and \ref{eq:33} are the same! \\ [2ex]
+Hull describes it the best here:
+\begin{displayquote}
+It follows that by choosing a portfolio of stock and the derivate, the Wiener process can be eliminated. The appropriate portfolio is: \\
+-1: derivate\\
+$\frac{\partial f }{\partial S} $ : Shares\\ [2ex]
+The holder of this portfolio is short one derivate and long an amount of $\frac{\partial f }{\partial S}$ of shares.
+\end{displayquote}
+So we define $\Pi$ as the portfolio value, thus:
+\begin{equation}\label{eq;34}
+\begin{split}
+    \Pi = -f + \frac{\partial f }{\partial S} S \\
+    \Delta \Pi = -\Delta f + \frac{\partial f }{\partial S} \Delta S
+\end{split}
+\end{equation}
+Since we assume that there is no arbitrage $\Delta z$ must be 0, since the portfolio must be riskless during $\Delta t$ and earn the risk-free rate (otherwise there would be arbitrage). It follows that:
+\begin{equation}\label{eq:35}
+    \Delta \Pi = r \Pi \Delta t
+\end{equation}
+When we plug \ref{eq:32} and \ref{eq:33} in \ref{eq;34}, we get
+\begin{equation}\label{eq:36}
+    \Delta \Pi = - \left[\frac{\partial f }{\partial t} - \frac{1}{2}\frac{\partial^{2} f }{\partial S^{2}} * \sigma^{2} S^{2}\right] \Delta t
+\end{equation}
+Using \ref{eq:35} and \ref{eq:36}, we get 
+\begin{equation}
+    \frac{\partial f }{\partial t} + r S \frac{\partial f}{\partial S} +\frac{1}{2}\frac{\partial^{2} f }{\partial S^{2}} * \sigma^{2} S^{2} - rf = 0
+\end{equation}\\
+Finally we have arrived to the Black-Scholes-Merton differential equation!\\[3ex]
+The BSM differential equation is riskless for a infinitesimally small time period ($lim_{\Delta t\to\ 0}$). Since $S$ and $t$ changes, $\frac{\partial f}{\partial S}$ changes as well, so the ratio between stocks and derivates kept in the portfolio gets rebalanced. \\[2ex]
+The particular derivate depends on the boundary conditions that are used. Different boundary condition results in different derivates. For instance for European call options you need to use the following boundary conditions at $t=T$:
+\begin{equation*}
+    f = \max (S - K, 0)
+\end{equation*}
+or for an European put option, it is:
+\begin{equation*}
+    f = \max (K - S, 0)
+\end{equation*}
+\subsection{Pricing Formulas}
+\subsubsection{European options}
+We get the formulas for European options by solving the BSM differential equation for the previously mentioned boundaries (where $c$ for call and $p$ for put is used):
+\begin{align}
+    \begin{split} \label{eq:38}
+        c &= S_{0}N(d1) - X e-^{rT} N(d2) \\ 
+        p &= X e^{-rT} N(-d2) - S_{0} N(-d1)
+    \end{split}
+\end{align}
+where 
+\begin{gather*}
+        d_{1} = \frac{\ln\left(\frac{S_{0}}{K}\right)+\left(r^{2}+\frac{\sigma^{2}}{2}\right)T}{\sigma T^{\frac{1}{2}}} \\
+        d_{2} = \frac{\ln\left(\frac{S_{0}}{K}\right)+\left(r^{2}-\frac{\sigma^{2}}{2}\right)T}{\sigma T^{\frac{1}{2}}} = d_{1} - \sigma T^{\frac{1}{2}}
+\end{gather*}
+The input for dividend paying European options has to be adjusted, which is covered in the Appendix
+\subsubsection{American call options with non-dividend paying stocks}
+American call option on a stock that pays no dividends during the life of the option will not be exercised early and, hence, can be valued as a European option with the standard Black-Scholes formula.
+\subsubsection{European warrants issued by firm on its own stocks}
+\begin{equation}
+    W = \left[\left(S_{0} + \frac{M}{N}W\right)N(d_{1}) - Ke^{-rT}N(d_{2})\right]\frac{N\gamma}{N + M\gamma}
+\end{equation}
+where 
+\begin{itemize}
+    \item $\gamma$ : The amount of shares per warrant
+    \item $N$ : Outstanding shares
+    \item $M$ : Outstanding European warrants
+\end{itemize}
+\subsection{Modelling Input}
+\subsubsection{Estimating volatility}
+If we define
+\begin{itemize}
+    \item $n+1$ : Observations
+    \item $\tau$ : Time in years
+    \item $u_{i}$ : Continuously compounded return in i\emph{th} interval
+\end{itemize}
+Due to $S_{i}= S_{i-1} e^{ui}$,
+\begin{equation}
+    u_{i} = \ln \left(\frac{S_{i}}{S_{i-1}}\right)
+\end{equation}
+To then calculate the deviations from the mean we use a similair calculation as with the standard deviation:
+\begin{equation*}
+    s = \left(\frac{1}{n-1} \sum_{i=1}^{n}u_{i}^{2} - \frac{1}{n(n-1)}\left(\sum_{i=1}^{n}u_{i}\right)^{2}\right)^\frac{1}{2}
+\end{equation*}
+Now, we see from \ref{eq:19} that $\sigma ^{*} = \frac{s}{\tau^{\frac{1}{2}}}$ but this has some flaws so the standard error can be shown to be
+\begin{equation}
+    \alpha = \frac{\sigma ^ {*}}{(2n)^{0.5}}
+\end{equation}
+Choosing n is hard, so here is the general recommendation from Hull:
+\begin{displayquote}
+Choosing an appropriate value for n is not easy. Ceteris paribus, more data generally leads to more accuracy. However, σ does change over time and data that are too old may not be relevant for predicting the future. A compromise that seems to work reasonably well is to use closing prices from daily data over the most recent 90 to 180 days. An often used rule of thumb is to set the time period over which the volatility is measured equal to time period over which it is applied.
+\end{displayquote}
+GARCH can also be used, see the GARCH Models in volatility models. \\
+If the stock pays dividend, we just need to change ui during a time interval that includes an ex-dividend day, given by:
+\begin{equation}
+    u_{i} = \ln \left(\frac{S_{i}+D}{S_{i-1}}\right)
+\end{equation}
+where $D$ is the dividend amount
+\section{Merton's Jump-Diffusion Model}
+The Jump-Diffusion model assumes that underlaying asset follows a jump-diffusion process. The downside from this is that it requires two more input parameters, which are “hard” to observe in the market. The parameters are the following:
+\begin{itemize}
+    \item $\lambda$ : Expected number of jumps per year
+    \item $\gamma$ : Percentage of total volatility explained by the jumps
+\end{itemize}
+The JmpDif (Jump-Diffusion model) solves the problem with the “Mes Mile-effect“ that comes with the BSM model. It also doesn’t assume the log normal distribution. Prices of assets vary in “normal“ vibrations in price, for example due to temporary supply and demand imbalances, and in “abnormal“ vibrations, caused by asset/sector specific news (for example quarterly reports). The “normal“ vibrations can be modelled by geometric Brownian motion and the “abnormal“ by a “jump“ process.
+\subsection{Additional Notation}
+\begin{itemize}
+    \item $a$: Instantaneous expected asset return
+    \item $\epsilon$: Expectations operator
+    \item $k$: Percent change of asset price if event occurs
+    \item $W$: Options price
+    \item $P$: Portfolio value
+    \item $\tau$: Time to expiry
+    \item $E$: Exercise price
+\end{itemize}
+\subsection{Calculations}
+\subsubsection{Poisson-driven Process}
+To start to describe the above mentioned “jump“ process, we’ll use a “Poisson-driven“ process. We now look at the probability of an event occurring in this Poisson distributed process:
+\begin{enumerate}
+    \item $\Prob$[event doesn't occurs in time interval $(t, t+h)$] = $1- \lambda h + O(h)$
+    \item $\Prob$[event occurs once in time interval $(t, t+h)$] = $\lambda h + O(h)$
+    \item $\Prob$[event occurs multiple times in time interval $(t, t+h)$] = $O(h)$
+\end{enumerate}
+Above, we can set $h$ to whatever we want. $O(h)$ is the asymptotic order symbol defined by $\psi(h) = O(h)$ when $\lim_{h\to 0} \left[\frac{\psi(h)}{O(h)}\right] = 0.$ $\lambda$ is the mean number of arrivals per time unit. \\ [2ex]
+If this event occurs, then we draw Y from a distribution, so if we ignore the continuity we would get something like $S(t+h) = S(t) Y$ \\ 
+The stock price can be expressed stochastically as:
+\begin{equation}\label{eq:43}
+    \frac{dS}{S} = (a - \lambda k) dt + \sigma dz + dq
+\end{equation}
+In the formula above $\sigma^{2}$ is the variance at the moment (if no Poisson event occurs), dz is the standard Gauss-Wiener process and $q(t)$ is the Poisson process of the event described above. k is defined as $\epsilon(Y - 1)$, where $(Y- I)$ is the random variable percentage change in the stock price if the Poisson event occurs. \\ [2ex]
+To make it clear, \ref{eq:43} can be rewritten as:
+\begin{equation*}
+    \frac{dS}{S} = (a - \lambda k) dt + \sigma dz
+\end{equation*}
+if event doesn't occur and
+\begin{equation*}
+    \frac{dS}{S} = (a - \lambda k) dt + \sigma dz + (Y-1)
+\end{equation*}
+if event does occur\\
+Setting a, $\lambda$, k and $\sigma$ to constants, then the random ratio of stock price at time 0 and time $t$ is:
+\begin{equation}
+    \frac{S_{t}}{S_{0}} = \exp \left(a - \frac{\sigma^{2}}{2} - \lambda k t + \sigma z(t)\right) Y(n)
+\end{equation}
+$z(t)$ is a Gaussian random variable, which has a mean of 0 and variance of $t$. $Y(n)$ is defined as:
+\begin{equation}
+    Y(n) = \begin{cases} 1 \text{ , if } n=0 \\
+    \Pi_{j=1}^{n} Y_{j} \text{ , if } n\geq1
+    \end{cases}
+\end{equation}
+$Y_{j}$ are independently and identically distributed and $n$ is Poisson distributed with parameter $\lambda t$.
+Now, we apply \ref{eq:43} to the options price, $W$, where $W(t) = F(S, t)$
+\begin{equation}
+    \frac{dW}{W} = (a_{W} - \lambda  k_{W}) dt + \sigma_{W} dz + dq_{W}
+\end{equation}
+It has the same terminology as \ref{eq:43} but everything is for the option \\ [2ex]
+When applying Ito’s lemma to the continuous part and a similar to the Poisson process we get:
 \end{document}

@@ -7,6 +7,8 @@
 % Set page size and margins
 % Replace `letterpaper' with `a4paper' for UK/EU standard size
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{biblatex}
+\addbibresource{references.bib}
 
 % Useful packages
 \usepackage{amsmath}
@@ -16,7 +18,6 @@
 \DeclareMathOperator{\Var}{Var}
 \DeclareMathOperator{\E}{E}
 \DeclareMathOperator{\Prob}{Prob}
-\DeclareMathOperator{\max}{max}
 \DeclareMathOperator{\drift}{drift}
 
 
@@ -34,18 +35,18 @@ Note that none of this is my (Fabian Farestam’s) research. It’s just a refor
 
 \section{Cox-Ross-Rubinstein Binomial Model}
 
-The binomial pricing model has a simple concept, namely that it builds a tree of possible pricing with a certain amount of steps until the time of the options maturity and calculates the arbitrage free price based on this tree. It’s easy to implement (can be $O(2^{n}$)) and also very practical while clearly demonstrating the no arbitrage argument. In special limiting cases of this we can get both the Black-Scholes model as well as the Cox-Ross jump process model (similar to the hybrid jump diffusion model by Merton). \\
+The binomial pricing model \cite{cox} has a simple concept, namely that it builds a tree of possible pricing with a certain amount of steps until the time of the options maturity and calculates the arbitrage free price based on this tree. It’s easy to implement (can be $O(2^{n}$)) and also very practical while clearly demonstrating the no arbitrage argument. In special limiting cases of this we can get both the Black-Scholes model as well as the Cox-Ross jump process model (similar to the hybrid jump diffusion model by Merton). \\
 The model assumes that:
 
 \begin{itemize}
     \item The stock price follows a multiplicative binominal process over discrete periods
-    \item The interest rate is constant and one might borrow and lend as much as wished at this interest rate. (For convenience we assume that r > 1)
+    \item The interest rate is constant and one might borrow and lend as much as wished at this interest rate. (For convenience we assume that $r > 1$)
 \end{itemize}
 
 \subsection{Notation}
 \begin{itemize}
-    \item $u$: Asset return with the probability of q 
-    \item $d$: Asset return with the probability of 1 - q
+    \item $u$: Asset return with the probability of $q$ 
+    \item $d$: Asset return with the probability of $1 - q$
     \item $S$: Stock Price
     \item $q$: Probability of tree path taken
     \item $r$: Riskless interest rate
@@ -133,9 +134,10 @@ We'll break up the above formula into two terms:
 \end{equation}
 In formula \ref{eq:7} we have two brackets, when taking a closer look at them one realises that we can express them as complementary binomial distribution function $\phi$. We can sum this up as the final simple Binomial Pricing formula:
 \begin{equation}\label{eq:8}
-    C = S *\phi(a; n, p) - K r^{-n} * \phi(a; n, p')
+    C = S *\phi(a; n, p') - K r^{-n} * \phi(a; n, p)
 \end{equation}
 where $p=\frac{r-d}{u-d}$ and $p'=\frac{u}{r}p$\\ [2ex]
+Natural values for $u$ and $d$ are $u = e^{\sigma \Delta t}$ and $d=\frac{1}{u}=e^{-\sigma \Delta t}$ where $\sigma$ represents the volatility of the asset under consideration \\ [2ex]
 Note that the formula above is only valid for American non-dividend paying call options.
 \subsection{Dividends}
 In this part in order to account for the dividend we assume that the stock has a constant dividend yield, $\delta$ on the ex-dividend date and a total of $v$ ex-dividend days. To account for dividend we need to define $\rho$ as one plus the interest rate over a period of $h=\frac{t}{n}$. The total return  is $\rho^{n} = r^{t}$, and we can express $\rho= r^{\frac{t}{n}}$. \\
@@ -154,7 +156,7 @@ The hedge ratio of the portfolio is:
     g = \frac{C(n, n - 1, 1) - C(n, n -1, 0)}{(u - d) * S}
 \end{equation*}
 \subsection{Limiting Cases: Black-Scholes + Cox-Ross jump process}
-We’ll start exploring these limiting cases by splitting our steps into small pieces. By setting $h$, the time elapsed between each step, as $h = \frac{t}{n}$. Now to get to a continuous tree we simply set $n -> \infty$. Again, we have $\rho^{n} = r^{t}$ so that $\rho = r^{\frac{t}{n}}$\\ [2ex]
+We’ll start exploring these limiting cases by splitting our steps into small pieces. By setting $h$, the time elapsed between each step, as $h = \frac{t}{n}$. Now to get to a continuous tree we simply set $n \rightarrow \infty$. Again, we have $\rho^{n} = r^{t}$ so that $\rho = r^{\frac{t}{n}}$\\ [2ex]
 From here we need to express $u$ and $d$ in terms of $n$. There’s two ways, one results in the Black Scholes model and the other in the Cox-Ross jump process model.
 \subsubsection{Black-Scholes}
 We’ll express the returns $u$ and $d$ from here on as $\log u$ and $\log u$, so over multiple periods we get that the final stock return is:
@@ -169,15 +171,15 @@ $j$ is the random number of upwards moves, which occurred during $n$ periods. We
 Since $\E[j] = n q$; and $\Var[j] = n q (1 - q)$; (due to the variance of one period being: $q(1-q)^{2} + (1-q)(0 - q)^{2} = q(1-q))$. Now we simplify the formulas above:
 \begin{gather}
 \begin{split}
-    \E[\log (\frac{S^{*}}{S})] = (\log \left(\frac{u}{d}\right)q +\log d)*n  = \mu n \\
-    \Var[\log (\frac{S^{*}}{S})] = (\log \left(\frac{u}{d}\right))^{2}q(1-q)*n = \sigma n
+    \E\left[\log \left(\frac{S^{*}}{S}\right)\right] = (\log \left(\frac{u}{d}\right)q +\log d)*n  = \mu n \\
+    \Var\left[\log \left(\frac{S^{*}}{S}\right)\right] = (\log \left(\frac{u}{d}\right))^{2}q(1-q)*n = \sigma n
 \end{split}
 \end{gather}
 Now we need to adjust $u$ and $d$ so that we get realistic results. Below $\overline{\mu}$ and $\overline{\sigma}$ are the empirical values of $\mu$ and $\sigma$ to so we get the empirical values after adjusting $u$ and $d$. \\ [3ex]
-As $n -> \infty$ :
+As $n \rightarrow \infty$ :
 \begin{gather*}
-    (\log \left(\frac{u}{d}\right)q +\log d)*n -> \overline{\mu}n \\
-    (\log \left(\frac{u}{d}\right))^{2}q(1-q)*n -> \overline{\sigma} n
+    (\log \left(\frac{u}{d}\right)q +\log d)*n \rightarrow \overline{\mu}n \\
+    (\log \left(\frac{u}{d}\right))^{2}q(1-q)*n \rightarrow \overline{\sigma} n
 \end{gather*}
 Thus, 
 \begin{gather}
@@ -187,10 +189,10 @@ Thus,
     q = \frac{1+\frac{\overline{\sigma}}{\overline{\mu}}\left(\frac{n}{t}\right)^{\frac{1}{2}}}{2}
 \end{split}
 \end{gather}
-This makes that every probability and possible outcome get changed. Now we use the central limit theorem, when applied it to our problem, says that as $n -> \infty$, if \ref{eq:14} below holds then \ref{eq:15} applies, where $N(z)$ is the standard normal distribution:
+This makes that every probability and possible outcome get changed. Now we use the central limit theorem, when applied it to our problem, says that as $n \rightarrow \infty$, if \ref{eq:14} below holds then \ref{eq:15} applies, where $N(z)$ is the standard normal distribution:
 \begin{align} \label{eq:14}
-    \frac{q|\log u - \mu|^{3} + (1-q)|\log d - \mu|^{3}}{\sigma^{3}n^{\frac{1}{2}}} & -> 0 \\
-    \Prob\left[\frac{\log\left(\frac{S^{*}}{S}\right) - \mu n}{\sigma n^{\frac{1}{2}}}\right] & -> N(z) \label{eq:15}
+    \frac{q|\log u - \mu|^{3} + (1-q)|\log d - \mu|^{3}}{\sigma^{3}n^{\frac{1}{2}}} & \rightarrow 0 \\
+    \Prob\left[\frac{\log\left(\frac{S^{*}}{S}\right) - \mu n}{\sigma n^{\frac{1}{2}}}\right] & \rightarrow N(z) \label{eq:15}
 \end{align}
 When we rewrite the Black Scholes theorem in terms of the the previously used notation, we get:
 \begin{equation}
@@ -205,7 +207,7 @@ To get the Cox-Ross jump process model, we set $u$, $d$, and $q$ to the followin
     q = \lambda \left(\frac{t}{n}\right) \\
 \end{gather*}
 where $\lambda$ is the intensity function (or rate) of the underlying Poisson process and $\zeta$ is related to the intensity measure of the distribution.\\
-The central limit theorem no longer holds for these values and the stock price converges to a log-Poisson distribution as $n -> \infty$. This complementary Poisson distribution can be expressed in the following form:
+The central limit theorem no longer holds for these values and the stock price converges to a log-Poisson distribution as $n \rightarrow \infty$. This complementary Poisson distribution can be expressed in the following form:
 \begin{equation}
     \psi (x,y) = \sum_{i=x}^{\infty} \frac{e^{-y}y^{i}}{i!}
 \end{equation}
@@ -229,7 +231,7 @@ where $y=\frac{(\log r - \xi) u t }{u-1}$ and $x$ is the the smallest non-negati
     \item $f$: Price of derivative
 \end{itemize}
 \subsection{Assumptions}
-These assumptions are used to derive the Black-Scholes-Merton differential equation and the equation only holds in this theoretical environment. Note that some of these assumptions can and will be accounted for at a later stage of the document. For instance interest rates can be stochastic, thus relaxing the conditions assumed.
+These assumptions are used to derive the Black-Scholes-Merton \cite{hull} differential equation and the equation only holds in this theoretical environment. Note that some of these assumptions can and will be accounted for at a later stage of the document. For instance interest rates can be stochastic, thus relaxing the conditions assumed.
 \begin{itemize}
     \item Random walk - Asset prices follow geometric Brownian motion: 
     \begin{equation*}
@@ -371,7 +373,7 @@ or for an European put option, it is:
 We get the formulas for European options by solving the BSM differential equation for the previously mentioned boundaries (where $c$ for call and $p$ for put is used):
 \begin{align}
     \begin{split} \label{eq:38}
-        c &= S_{0}N(d1) - X e-^{rT} N(d2) \\ 
+        c &= S_{0}N(d1) - X e^{-rT} N(d2) \\ 
         p &= X e^{-rT} N(-d2) - S_{0} N(-d1)
     \end{split}
 \end{align}
@@ -409,22 +411,23 @@ To then calculate the deviations from the mean we use a similair calculation as 
 \begin{equation*}
     s = \left(\frac{1}{n-1} \sum_{i=1}^{n}u_{i}^{2} - \frac{1}{n(n-1)}\left(\sum_{i=1}^{n}u_{i}\right)^{2}\right)^\frac{1}{2}
 \end{equation*}
-Now, we see from \ref{eq:19} that $\sigma ^{*} = \frac{s}{\tau^{\frac{1}{2}}}$ but this has some flaws so the standard error can be shown to be
+Now, we see from \ref{eq:19} that $\sigma  = \frac{s}{\tau^{\frac{1}{2}}}$ but this has some flaws so the standard error can be shown to be
 \begin{equation}
-    \alpha = \frac{\sigma ^ {*}}{(2n)^{0.5}}
+    \alpha = \frac{\sigma }{(2n)^{0.5}}
 \end{equation}
+Note that the volatility has to be annualised since the time used is in years.
 Choosing n is hard, so here is the general recommendation from Hull:
 \begin{displayquote}
-Choosing an appropriate value for n is not easy. Ceteris paribus, more data generally leads to more accuracy. However, σ does change over time and data that are too old may not be relevant for predicting the future. A compromise that seems to work reasonably well is to use closing prices from daily data over the most recent 90 to 180 days. An often used rule of thumb is to set the time period over which the volatility is measured equal to time period over which it is applied.
+Choosing an appropriate value for n is not easy. Ceteris paribus, more data generally leads to more accuracy. However, $\sigma$ does change over time and data that are too old may not be relevant for predicting the future. A compromise that seems to work reasonably well is to use closing prices from daily data over the most recent 90 to 180 days. An often used rule of thumb is to set the time period over which the volatility is measured equal to time period over which it is applied.
 \end{displayquote}
 GARCH can also be used, see the GARCH Models in volatility models. \\
-If the stock pays dividend, we just need to change ui during a time interval that includes an ex-dividend day, given by:
+If the stock pays dividend, we just need to change $u_{i}$ during a time interval that includes an ex-dividend day, given by:
 \begin{equation}
     u_{i} = \ln \left(\frac{S_{i}+D}{S_{i-1}}\right)
 \end{equation}
 where $D$ is the dividend amount
 \section{Merton's Jump-Diffusion Model}
-The Jump-Diffusion model assumes that underlaying asset follows a jump-diffusion process. The downside from this is that it requires two more input parameters, which are “hard” to observe in the market. The parameters are the following:
+The Jump-Diffusion model \cite{Kou_2007} \cite{mert} assumes that underlaying asset follows a jump-diffusion process. The downside from this is that it requires two more input parameters, which are “hard” to observe in the market. The parameters are the following:
 \begin{itemize}
     \item $\lambda$ : Expected number of jumps per year
     \item $\gamma$ : Percentage of total volatility explained by the jumps
@@ -473,7 +476,7 @@ $z(t)$ is a Gaussian random variable, which has a mean of 0 and variance of $t$.
     Y(n) = \begin{cases} 1 \text{ , if } n=0 \\
     \Pi_{j=1}^{n} Y_{j} \text{ , if } n\geq1
     \end{cases}
-\end{equation}
+\end{equation}\label{eq:46}
 $Y_{j}$ are independently and identically distributed and $n$ is Poisson distributed with parameter $\lambda t$.
 Now, we apply \ref{eq:43} to the options price, $W$, where $W(t) = F(S, t)$
 \begin{equation}
@@ -481,4 +484,215 @@ Now, we apply \ref{eq:43} to the options price, $W$, where $W(t) = F(S, t)$
 \end{equation}
 It has the same terminology as \ref{eq:43} but everything is for the option \\ [2ex]
 When applying Ito’s lemma to the continuous part and a similar to the Poisson process we get:
+\begin{equation}\label{eq:47}
+\begin{gathered}
+    a_{W} = \frac{\frac{\sigma^{2}}{2}S^{2}F''_{SS}(S,t) + (a-\lambda k) S F'_{S} + F'_{t} + \lambda \epsilon (F(S,Y,t) - F(S,t))}{F(S,t)}\\
+    \sigma _{W} = \frac{F'_{S}(S,t) \sigma S}{F(S,t)}
+\end{gathered}
+\end{equation}
+Since $q_{W}(t)$ is dependent on $q(t)$ (so only if $q(t)$ occurs $q_{W}(t)$ occurs). If the event manifests $Y = y$ and $Y_{W} = \frac{F(SY, t)}{F(S, t)}$. This is how we partly get the result in \ref{eq:47}. \\[2ex]
+Let’s try to model portfolio value similarly to \ref{eq:43} and \ref{eq:46}, where $w{1}$, $w_{2}$, and $w_{3}$ will be the proportions of stock, option and riskless asset:
+\begin{equation}
+    \frac{dP}{P} = (a_{P} - \lambda  k_{P}) dt + \sigma_{P} dz + dq_{P}
+\end{equation}
+Based on \ref{eq:43} and \ref{eq:46} we get ($w_{3} = 1 - w_{1} - w_{2}$ has been substituted) formulas similar to \ref{eq:47}, but notice the differences and similarities:
+\begin{equation} \label{eq:49}
+    \begin{gathered}
+    a_{P} = w_{1}(a - r) + w_{2}(a_{W} -r) + r \\
+    \sigma_{p} = w_{1}\sigma + w_{2}\sigma_{W} \\
+    Y_{P} - 1 = w_{1}(Y - 1) +  w_{2}\frac{F(SY, t) - F(S, t)}{ F(S, t) }
+    \end{gathered}
+\end{equation}
+Due to portfolio mixing being a linear operation and the option price being a non-linear function of the stock price, we can’t use the simple method with assumptions we used to get the BSM differential equation (see appendix for greater detail).
+\subsubsection{Getting a options pricing formula}
+When the Black Scholes “no arbitrage“ method cannot be used, we can still derive a options formula if we can figure of the options expected return as a function of the stock price and time to expiry. We define the function of $g(S, \tau $to be the equilibrium momentary expected return. We’ll use this and \ref{eq:47}, we get that $F$ (a function of $\tau$ this time) must hold the following equation (which is a bit similar to the BSM):
+\begin{equation} \label{eq:50}
+    \frac{1}{2}\sigma^{2}S^{2}F''_{SS} + (a - \lambda k)SF'_{S} - F'_{\tau} - g(S,\tau)F + \lambda \epsilon (F(S,Y,t) - F(S,t)) = 0
+\end{equation}
+subject to the boundary conditions $F(0, \tau) = 0$ and $F(S, 0) = \max(0, S - E)$ \\ [2ex]
+The equation of \ref{eq:50} can be solved, but then you have to know $a$ and $g(S, \tau)$. However this is a bit hard and a not so fruitful approach. \\
+Now we’ll try price it with CAPM (Capital Asset Pricing Model), which BSM also assumed to be true. Here the jumps will represent non-systematic risks and this is the only source of uncertainty. Thus the $\beta$ of the portfolio must be 0 and in CAPM the expected return of such portfolios (with 0 $\beta$) must be $r$ ($a_{P^{*}} = r$). Here follows from \ref{eq:49} $w_{1}^{*}(a - r) + w_{2}^{*}(a_{w} -r) = 0$ and we substitute $w_{1}^{*}$ & $w_{2}^{*}$:
+\begin{equation} \label{eq:51}
+    \frac{a-r}{\sigma} = \frac{a_{W}-r}{\sigma_{W}}
+\end{equation}
+When using \ref{eq:51}, \ref{eq:47} we get that $F$ must hold the following equation:
+\begin{equation} \label{eq:52}
+    \frac{1}{2}\sigma^{2}S^{2}F''_{SS} + (r - \lambda k)SF'_{S} - F'_{\tau} - rF + \lambda \epsilon (F(S,Y,t) - F(S,t)) = 0
+\end{equation}
+\ref{eq:52} still depends on the boundaries specified before and the same equation, except that we have replaced $a & g(S, \tau)$ with $r$.
+\subsubsection{Solution to the equation}
+To solve the equation \ref{eq:52} and obtain a solution, we have to further specify the distribution of $Y$, a partial solution. We’ll start by defining $W(S, \tau; E, r, \sigma^2) $as the no jump Black Scholes formula:
+\begin{equation}
+    W(S, \tau; E, r, \sigma^2) = S \phi (d_{1}) - E e^{-r\tau} \phi(d_{2})
+\end{equation}
+where $\phi(y) = \frac{1}{(2\pi)^{\frac{1}{2}}}\int_{-\infty}^{y}\exp\left({-\frac{s^{2}}{2}}\right)\,ds$ i.e. the cumulative normal distribution function
+and 
+\begin{gather*}
+    d_{1} = \frac{\ln\left(\frac{S}{E}\right)+\left(r+\frac{\sigma^{2}}{2}\right)\tau}{\sigma \tau^{\frac{1}{2}}} \\
+    d_{2} = d_{1} - \sigma \tau^{\frac{1}{2}}
+\end{gather*}
+Defining the random variable $X_{n}$ to have the same distribution as the product of $n$ independently and identically distributed random variables, with the same distribution of $Y$ used in \ref{eq:43}, where $X_{0} = 1$. $\epsilon_{n}$ is the expectation operator over the distribution of $X_{n}$. The solution to \ref{eq:52} for the options price when the current stock price is S can be written as:
+\begin{equation} \label{eq:54}
+    F(S, \tau) = \sum_{n=0}^{\infty} e^{-\lambda \tau}\frac{(\lambda \tau)^{n}}{n!} \left[\epsilon_{n} W(SX_{n}e^{-\lambda \tau}, \tau; E, \sigma^2, r) \right]
+\end{equation}
+\subsection{Special cases of the pricing formula}
+In these special cases formula \ref{eq:54} can be vastly simplified. Case number 1 is when the Poisson event occurs, the stock price goes to zero and case number 2 is when $Y$ has a log-normal distribution.
+\subsubsection{Case 1}
+We need to set $Y = 0$ with a probability to one if the event occurs, $X_{n}$ = 0 if $n \neq= 0$ and $k = -1$. Then \ref{eq:54} can be written as:
+\begin{equation}
+    F(S, \tau) =  e^{-\lambda \tau}\left[W(Se^{\lambda \tau}, \tau; E, \sigma^2, r) \right] = W(S, \tau; E, \sigma^2, r + \lambda)
+\end{equation}
+It is identical to the standard Black Scholes, but the interest rate is $r' = r + \lambda$
+\subsubsection{Case 2}
+If $Y$ is log-normally distributed, $\gamma = \log (k + 1)$ and $\sigma^{2}$ is the variance of the logarithm of $Y$. $X_{n}$ has a log-normal distribution of which $\sigma^2 n$ is the variance of $\log X_{n}$ and $\epsilon_{0}(X_{0}) = e^{n\gamma}$
+\begin{equation}
+    f_{n}(S, \tau) = W(S, \tau; E, v_{n}^2, r_{n})
+\end{equation}
+where $v_{n}^2 = \sigma^2 + \frac{n\sigma^{2}}{\tau}$ and $r_{n} = r - \lambda k + \frac{n\gamma}{\tau}$ \\[2ex]
+It is the standard Black Scholes option, where $v_{n}^{2}$ is the “formal“ stocks variance per unit time and $r_{n}$ is the “formal” instantaneous rate of interest. Finally we have:
+\begin{equation}
+    F(S, \tau) = \sum_{n=1}^{\infty} e^{-\lambda \tau} \frac{(\lambda(1+k)\tau)^{n}}{n!}f_{n}(S,\tau)
+\end{equation}
+What happens in these “magic“ formulas is that $f_{n}$ is the value of the options when we know how many Poisson jumps will occur during the options life time. $F(S, \tau)$, the actual value of the option, is the weighted sum of these prices, where the weight responds to the probability that a Poisson random variable (with characteristic parameter $\lambda(1+k)\tau$) will take the value of $n$.
+\section{Heston Model}
+The Heston model \cite{Heston_1993} is a stochastic volatility model, thus it has one Stochastic Differential Equation (SDE) for the asset and another SDE for the stochastic volatility.
+\subsection{Calculations}
+\subsubsection{Volatility Modelling}
+In the Heston model we assume that the stock price follows:
+\begin{equation}
+    dS = \mu S dt + v^{\frac{1}{2}}Sdz_{1}
+\end{equation}
+If the volatility, $v$, follows an Ornstein-Uhlenbeck process:
+\begin{equation}
+    dv^{\frac{1}{2}} = -\beta v^{\frac{1}{2}} dt + \sigma dz_{2}
+\end{equation}
+Then by using Ito’s lemma we see that the variance $v$ follows:
+\begin{equation} \label{eq:60}
+    dv = (\sigma ^{2} - 2\beta v)dt + 2 \sigma v^{\frac{1}{2}}dz_{2}
+\end{equation}
+\ref{eq:60} can be rewritten as the square-root process and as in CIR:
+\begin{equation}
+    dv = K(\theta - v) dt + \sigma v^{\frac{1}{2}} dz_{2}
+\end{equation}
+$z_{1}$ and $z_{2}$ have the correlation of $\rho$. We assume a constant interest rate $r$. The price of the asset $f(S, v, t)$ must hold \ref{eq:62}, to follow the no arbitrage argument:
+\begin{equation} \label{eq:62}
+    \frac{1}{2}vS^{2}\frac{\partial^{2} f}{\partial S^{2}} + \rho \sigma v S \frac{\partial^{2} f}{\partial S \partial v} + \frac{1}{2}v\sigma^{2}\frac{\partial^{2} f}{\partial v^{2}} + r S \frac{\partial f}{\partial S} + [K(\theta - v) - \lambda] \frac{\partial f}{\partial v} - rf + \frac{\partial f}{\partial t} = 0
+\end{equation}
+In \ref{eq:62} $\lambda$ represents the price of volatility risk and is asset independent.  Research suggests that $\lambda$ is non zero for equity options; there’s approaches to model it for consumption assets but we won’t consider them here. We use the following boundary conditions for a European call option with the strike X and with T as maturity in \ref{eq:62}: 
+\begin{equation} \label{eq:63}
+    \begin{gathered}
+    f(S, v, T) = \max(S - X, 0) \\ 
+    U(0, v, t) = 0 \\
+    \frac{\partial f}{\partial S} (\infty, v, t) = 1 \\
+    f (S, \infty, t ) = S \\ 
+    r S \frac{\partial f}{\partial S} (S, 0, t) + K \theta \frac{\partial f}{\partial v} (S, 0, t) - r f(S, 0, t) + \frac{\partial f}{\partial t} (S, 0, t) = 0
+    \end{gathered}
+\end{equation}
+From similarity with the Black Scholes formula, we guess that our solution will be along the lines of:
+\begin{equation} \label{eq:64}
+     C(S, v, t) = SP_{1} - XP(t, T)P_{2}
+\end{equation}
+where $SP1$ is the present value of spot price in optimal exercise and $XP(t, T)P2$ is the present value of strike price payment
+We plug \ref{eq:64} into \ref{eq:63} and $P_{1}$ and $P_{2}$ must satisfy \ref{eq:65} below
+\begin{equation} \label{eq:65}
+    \frac{1}{2}v\frac{\partial^{2} P_{j}}{\partial x^{2}} + \rho \sigma v \frac{\partial^{2} P_{j}}{\partial x \partial v} + \frac{1}{2}v\sigma^{2}\frac{\partial^{2} P_{j}}{\partial v^{2}} + (r + u_{j} v) \frac{\partial P_{j}}{\partial x} + [a-b_{j}v] \frac{\partial P_{j}}{\partial v} + \frac{\partial P_{j}}{\partial t} = 0
+\end{equation}
+for $j=1,2$ and where we have 
+\begin{equation*}
+   \begin{gathered}
+   x=\ln S \\
+   u_{1} = \frac{1}{2} \\
+   u_{2} = -\frac{1}{2} \\
+   a = K\theta \\ 
+   b_{1} = K + \lambda - \rho \sigma \\ 
+   b_{2} = K + \lambda
+   \end{gathered}
+\end{equation*}
+Since \ref{eq:65} must follow \ref{eq:62}, we have the terminal condition
+\begin{equation}\label{eq:66}
+    P_{j}(x, v, T; \ln(X)) = 1_{(x \geq \ln(X))}
+\end{equation}
+From this formula we get that the probabilities are risk-neutralized. The conditional probability, $P_{j}$, of the option expiring ITM is
+\begin{equation} \label{eq:67}
+    P_{j}(x, v, T; \ln(X)) = \Prob[x(T) \geq \ln(X)\, | \,x(t) = x, v(t) = v]
+\end{equation}
+\ref{eq:67} holds when x follows
+\begin{equation}
+    \begin{gathered}
+    dx(t) = (r + u_{j} v) dt + v(t)^{\frac{1}{2}} dz_{1}(t) \\
+    dv = (a_{j} - b_{j} v) dt + \sigma v(t)^{\frac{1}{2}} dz_{2}(t)
+    \end{gathered}
+\end{equation}
+\subsection{Characteristics}
+Since there’s no closed form solution to the probability from \ref{eq:67}, we have to calculate the characteristic functions. At time $T$ in the future, $f(x, v, t)$ is the expectation of a function $g(x(T), v(T))$, where $x(t)$ and $v(t)$ follow the risk neutral process from \ref{eq:66}:
+\begin{equation}
+    f(x, v, t) = \E[g(x(T), v(T)) \,|\, x(t) = x, v(t) = v]
+\end{equation}
+We apply Ito's lemma to this:
+\begin{equation} \label{eq:70}
+    df = \left[\frac{1}{2}v\frac{\partial^{2} f}{\partial x^{2}} + \rho \sigma v \frac{\partial^{2} f}{\partial x \partial v} + \frac{1}{2}v\sigma^{2}\frac{\partial^{2} f}{\partial v^{2}} + (r + u_{j} v) \frac{\partial f}{\partial x} + [a-b_{j}v] \frac{\partial f}{\partial v} + \frac{\partial f}{\partial t}\right] dt + [r + u_{j} v] \frac{\partial f}{\partial x}dz_{1} + [a-b_{j}v] \frac{\partial f}{\partial v} dz_{2}
+\end{equation}
+$\E[df]=0$ and when we apply this knowledge to \ref{eq:70}, we get 
+\begin{equation}\label{eq:71}
+    \frac{1}{2}v\frac{\partial^{2} f}{\partial x^{2}} + \rho \sigma v \frac{\partial^{2} f}{\partial x \partial v} + \frac{1}{2}v\sigma^{2}\frac{\partial^{2} f}{\partial v^{2}} + (r + u_{j} v) \frac{\partial f}{\partial x} + [a-b_{j}v] \frac{\partial f}{\partial v} + \frac{\partial f}{\partial t} = 0
+\end{equation}
+\ref{eq:71} is called the Fokker-Planck forward equation and is very useful, since we know that:
+\begin{equation}
+    f(x, v, T) = g(x, v)
+\end{equation}
+Due to this we can set $g(x, v)$ equal to some function and then solve $f(x, v, T)$ from it. Let’s take a look at some examples:
+\begin{itemize}
+    \item $g(x, v) = \delta(x - x0) \rightarrow$  Conditional probability density that $x(T) = x_{0}$ at time $t$.
+    \item $g(x,v) = 1_{(x \geq \ln(X))} \rightarrow$ Conditional probability that $x(T) > \ln(K)$ at time $t$.
+    \item $g(x,v) = e^{i\phi x} \rightarrow$ Characteristic functions
+\end{itemize}
+To solve for the characteristic functions (which are the solution to the last example of $g(v, x)$ above) we have to have an idea on the functional form. By using the linearity of \ref{eq:70} coefficients, we guess:
+\begin{equation} \label{eq:73}
+    f(x, v, t) = \exp[C (T - t) + D (T - t) v + i\phi x]
+\end{equation}
+In order to reduce the functional form to two ordinary differential equations, we plug \ref{eq:73} into \ref{eq:70}:
+\begin{gather}
+    -\frac{1}{2}  \sigma^{2} \phi^{2} + \rho \sigma \phi i D + \frac{1}{2} D^{2} + u_{j} \phi i - b_{j} D + \frac{\partial D}{\partial t} = 0 \\
+    r \phi i + a D + \frac{\partial C}{\partial t} = 0
+\end{gather}
+subject to $C(0) = 0$ and $D(0) = 0$
+\subsection{Result}
+To summarize we previously get that the characteristic functions of \ref{eq:66} which hold the terminal condition $f_{j}(x, v, T; \phi) = e^{i \phi x}$ satisfy \ref{eq:62}. The final solution of the characteristic function is:
+\begin{equation}\label{eq:76}
+    f_{j}(x, v, t; \phi) = \exp(C(T - t; \phi) + D(T - t; \phi) v + i \phi x);
+\end{equation}
+where 
+\begin{equation}
+    \begin{gathered}
+    C(\tau, \phi) = r \phi i \tau + \frac{a}{\sigma^{2}} * {(b_{j} - \rho \sigma \phi i + d) \tau - 2 \ln\left[\frac{1 - g ed r}{1 - g}\right]} \\
+    D(\tau,\phi) = \frac{(b_{j} - \rho \sigma \phi i + d)} {\sigma^{2}} \frac{1 - e^{d r}} {1 - g e^{d r}} \\
+    g = \frac{b_{j} - \rho \sigma \phi i + d}{b_{j} - \rho \sigma \phi i - d} \\
+    d = (\rho \sigma \phi i - b_{j})^{2} - \sigma^{2} (2 u_{j} \phi i + \phi^{2})
+    \end{gathered}
+\end{equation}
+If we want the probabilities, we can invert the characteristic functions:
+\begin{equation}\label{eq:78}
+     P_{j}(x, v, T; \ln(X)) = \frac{1}{2} + \frac{1}{\pi} \int_{0}^{\infty} \Re\left[\frac{e^{-i \phi \ln(X)} f_{j}(x, v, T; \phi)}{i \phi}\right] \, d\phi
+\end{equation}
+If we want to get the price of a European call option, then we have to get the solution from \ref{eq:64}, \ref{eq:76} and \ref{eq:78}.
+\subsection{Modelling Input}
+Heston recommends the following default parameter values for the simulation of option prices:
+\begin{table}[]
+    \centering
+    \begin{tabular}{c|c}
+     \textbf{Parameter} & \textbf{Value} \\
+    Mean reversion & $K^{*}=2$ \\
+    Long-run variance & $\theta^{*}=0.01$ \\
+    Current variance & $v(t) = 0.01$ \\
+    Correlation of $z_{1}(t)$ and $z_{2}(t)$ & $\rho = 0.0$ \\
+    Volatility & $\sigma = 0.1$ \\
+    Option maturity & $\tau = 0.5$ years\\
+    Interest rate & $r=0$ \\
+    Strike Price & $X=100$ \\
+    \end{tabular}
+    \caption{Default parameters for use with the Heston Model}
+    \label{tab:tab1}
+\end{table}
+Note that you need to adjust (at least) some of these to get realistic results, for instance the strike price, X and the options maturity.  
+\printbibliography
 \end{document}

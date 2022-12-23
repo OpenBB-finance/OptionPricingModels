@@ -121,7 +121,7 @@ From this we conclude that all assumptions made from \ref{eq:2} also hold for \r
 \subsection{Binomial tree with any amount of steps}
 We can find the call value recursively, by starting at the expiration and working backwards, for any amount of steps:
 \begin{equation}\label{eq:5}
-    C = \frac{\sum_{j=0}^{n} {n \choose j} p^{j}(1-p)^{n-j}\max(0, u^{j}d^{n-j}S - K)}{r^{n}}
+    C = \frac{\sum_{j=0}^{n}{n \choose j} p^{j}(1-p)^{n-j}\max(0, u^{j}d^{n-j}S - K)}{r^{n}}
 \end{equation}
 We’re not yet done since we can express this in a way nicer form by some transformations:
 \begin{equation}\label{eq:6}
@@ -192,7 +192,7 @@ Thus,
 This makes that every probability and possible outcome get changed. Now we use the central limit theorem, when applied it to our problem, says that as $n \rightarrow \infty$, if \ref{eq:14} below holds then \ref{eq:15} applies, where $N(z)$ is the standard normal distribution:
 \begin{align} \label{eq:14}
     \frac{q|\log u - \mu|^{3} + (1-q)|\log d - \mu|^{3}}{\sigma^{3}n^{\frac{1}{2}}} & \rightarrow 0 \\
-    \Prob\left[\frac{\log\left(\frac{S^{*}}{S}\right) - \mu n}{\sigma n^{\frac{1}{2}}}\right] & \rightarrow N(z) \label{eq:15}
+    \Prob\left[\frac{\log\left(\frac{S^{*}}{S}\right) - \mu n}{\sigma n^{\frac{1}{2}}} \le z\right] & \rightarrow N(z) \label{eq:15}
 \end{align}
 When we rewrite the Black Scholes theorem in terms of the the previously used notation, we get:
 \begin{equation}
@@ -272,7 +272,7 @@ and it follows that
     \eta = \frac{1}{T} \ln\left(\frac{S_{T}}{S_{0}}\right)
 \end{equation}
 For correctly understanding \ref{eq:20} we need to get $\ln\left(\frac{S_{T}}{S_{0}}\right))$, we get this when transforming \ref{eq:19}: 
-\begin{equation}
+\begin{equation}\label{eq:21}
     \ln\left(\frac{S_{T}}{S_{0}}\right) \sim \phi\left(\left(\mu - \frac{\sigma^{2}}{2}\right)T, \sigma T^{\frac{1}{2}}\right)
 \end{equation}
 So it then follows that 
@@ -340,7 +340,7 @@ $\frac{\partial f }{\partial S} $ : Shares\\ [2ex]
 The holder of this portfolio is short one derivate and long an amount of $\frac{\partial f }{\partial S}$ of shares.
 \end{displayquote}
 So we define $\Pi$ as the portfolio value, thus:
-\begin{equation}\label{eq;34}
+\begin{equation}\label{eq:34}
 \begin{split}
     \Pi = -f + \frac{\partial f }{\partial S} S \\
     \Delta \Pi = -\Delta f + \frac{\partial f }{\partial S} \Delta S
@@ -350,17 +350,17 @@ Since we assume that there is no arbitrage $\Delta z$ must be 0, since the portf
 \begin{equation}\label{eq:35}
     \Delta \Pi = r \Pi \Delta t
 \end{equation}
-When we plug \ref{eq:32} and \ref{eq:33} in \ref{eq;34}, we get
+When we plug \ref{eq:32} and \ref{eq:33} in \ref{eq:34}, we get
 \begin{equation}\label{eq:36}
     \Delta \Pi = - \left[\frac{\partial f }{\partial t} - \frac{1}{2}\frac{\partial^{2} f }{\partial S^{2}} * \sigma^{2} S^{2}\right] \Delta t
 \end{equation}
 Using \ref{eq:35} and \ref{eq:36}, we get 
-\begin{equation}
+\begin{equation}\label{eq:37}
     \frac{\partial f }{\partial t} + r S \frac{\partial f}{\partial S} +\frac{1}{2}\frac{\partial^{2} f }{\partial S^{2}} * \sigma^{2} S^{2} - rf = 0
 \end{equation}\\
 Finally we have arrived to the Black-Scholes-Merton differential equation!\\[3ex]
-The BSM differential equation is riskless for a infinitesimally small time period ($lim_{\Delta t\to\ 0}$). Since $S$ and $t$ changes, $\frac{\partial f}{\partial S}$ changes as well, so the ratio between stocks and derivates kept in the portfolio gets rebalanced. \\[2ex]
-The particular derivate depends on the boundary conditions that are used. Different boundary condition results in different derivates. For instance for European call options you need to use the following boundary conditions at $t=T$:
+The BSM differential equation is riskless for a infinitesimally small time period ($lim_{\Delta t\to\ 0}$). Since $S$ and $t$ changes, $\frac{\partial f}{\partial S}$ changes as well, so the ratio between stocks and derivatives kept in the portfolio gets rebalanced. \\[2ex]
+The particular derivative depends on the boundary conditions that are used. Different boundary condition results in different derivatives. For instance for European call options you need to use the following boundary conditions at $t=T$:
 \begin{equation*}
     f = \max (S - K, 0)
 \end{equation*}
@@ -511,7 +511,7 @@ When the Black Scholes “no arbitrage“ method cannot be used, we can still de
 \end{equation}
 subject to the boundary conditions $F(0, \tau) = 0$ and $F(S, 0) = \max(0, S - E)$ \\ [2ex]
 The equation of \ref{eq:50} can be solved, but then you have to know $a$ and $g(S, \tau)$. However this is a bit hard and a not so fruitful approach. \\
-Now we’ll try price it with CAPM (Capital Asset Pricing Model), which BSM also assumed to be true. Here the jumps will represent non-systematic risks and this is the only source of uncertainty. Thus the $\beta$ of the portfolio must be 0 and in CAPM the expected return of such portfolios (with 0 $\beta$) must be $r$ ($a_{P^{*}} = r$). Here follows from \ref{eq:49} $w_{1}^{*}(a - r) + w_{2}^{*}(a_{w} -r) = 0$ and we substitute $w_{1}^{*}$ & $w_{2}^{*}$:
+Now we’ll try price it with CAPM (Capital Asset Pricing Model), which BSM also assumed to be true. Here the jumps will represent non-systematic risks and this is the only source of uncertainty. Thus the $\beta$ of the portfolio must be 0 and in CAPM the expected return of such portfolios (with 0 $\beta$) must be $r$ ($a_{P^{*}} = r$). Here follows from \ref{eq:49} $w_{1}^{*}(a - r) + w_{2}^{*}(a_{w} -r) = 0$ and we substitute $w_{1}^{*}$ \& $w_{2}^{*}$:
 \begin{equation} \label{eq:51}
     \frac{a-r}{\sigma} = \frac{a_{W}-r}{\sigma_{W}}
 \end{equation}
@@ -519,10 +519,10 @@ When using \ref{eq:51}, \ref{eq:47} we get that $F$ must hold the following equa
 \begin{equation} \label{eq:52}
     \frac{1}{2}\sigma^{2}S^{2}F''_{SS} + (r - \lambda k)SF'_{S} - F'_{\tau} - rF + \lambda \epsilon (F(S,Y,t) - F(S,t)) = 0
 \end{equation}
-\ref{eq:52} still depends on the boundaries specified before and the same equation, except that we have replaced $a & g(S, \tau)$ with $r$.
+\ref{eq:52} still depends on the boundaries specified before and the same equation, except that we have replaced $a \& g(S, \tau)$ with $r$.
 \subsubsection{Solution to the equation}
 To solve the equation \ref{eq:52} and obtain a solution, we have to further specify the distribution of $Y$, a partial solution. We’ll start by defining $W(S, \tau; E, r, \sigma^2) $as the no jump Black Scholes formula:
-\begin{equation}
+\begin{equation}\label{eq:53}
     W(S, \tau; E, r, \sigma^2) = S \phi (d_{1}) - E e^{-r\tau} \phi(d_{2})
 \end{equation}
 where $\phi(y) = \frac{1}{(2\pi)^{\frac{1}{2}}}\int_{-\infty}^{y}\exp\left({-\frac{s^{2}}{2}}\right)\,ds$ i.e. the cumulative normal distribution function
@@ -676,7 +676,7 @@ If we want the probabilities, we can invert the characteristic functions:
 \end{equation}
 If we want to get the price of a European call option, then we have to get the solution from \ref{eq:64}, \ref{eq:76} and \ref{eq:78}.
 \subsection{Modelling Input}
-Heston recommends the following default parameter values for the simulation of option prices:
+Heston recommends the following default parameter values for the simulation of option prices: \ref{tab:tab1}\newline\newline
 \begin{table}[]
     \centering
     \begin{tabular}{c|c}
@@ -695,4 +695,240 @@ Heston recommends the following default parameter values for the simulation of o
 \end{table}
 Note that you need to adjust (at least) some of these to get realistic results, for instance the strike price, X and the options maturity.  
 \printbibliography
+
+\clearpage
+\pagenumbering{roman}
+\appendix
+\section{Cox-Ross-Rubinstein Binomial Model}
+
+\subsection{Modelling a known dollar dividend}
+The binomial tree gets a bit more complicated when the dividend, D, is fixed, but this is often a partly reasonable assumption (i.e. a firm allocates a certain amount of money for dividends → when the stock price suddenly doubles the dividend does not often). See Figure \ref{fig:divtree}.\\
+\begin{figure}
+\centering
+\includegraphics[width=0.3\textwidth]{five-step-tree-w-dividend.png}
+\caption{\label{fig:divtree} Binomial tree with known dividend}
+\end{figure}
+Before the ex-dividend date the Stock price is simply $S_0 u^j d^n - j$ (for $j = 0, 1, 2, …,$ until dividend), then the stock price becomes $S_0 u^j d^n - j - D$ on the step after the ex-dividend date and after this point in time the stock price is $(S_0 u^j d^{n - j} - D) * u^k d^l$ (where k and l are steps up and down after the dividend). For the evaluation we start at $n = 0$ and go across the tree and value the options value at each step as usual, but with the adjusted stock prices.\\This quickly becomes a very processing power heavy computation as we add more dividend dates, since for each ex-dividend date at time, $b$, we have to simulate $n^b$ new binomial trees in parallel. In order to avoid this for European we can discount the value of the dividend.
+
+\subsection{Proof of convergence}
+We can write the binomial options pricing theorem \ref{eq:8} as:
+\begin{equation}\label{eq:A2.1}
+    C = S *\phi(a; n, p') - K \rho^{-n} * \phi(a; n, p)
+\end{equation}
+The only drastic difference is that $\rho^{-n}$ is here instead of $r{-t}$ but they’re equal to each other. Thus we only need to prove the following:
+\begin{equation}\label{eq:A2.2a}
+    \phi(a; n, p') \to N(x)
+\end{equation}
+\begin{equation}\label{eq:A2.2b}
+    \phi(a; n, p) \to N(x - \sigma t^{0.5})
+\end{equation}
+If we manage to prove \ref{eq:A2.2a} we just need the same process for proving \ref{eq:A2.2b}, which we’ll skip.
+
+$\phi(a; n, p)$ is the sum of n random variables, which takes on $1$ (with the probability of $p$) or $0$ (with the probability of $p - 1$), this will be greater than or equal to $a$ (recall that it is the smallest non-negative integer greater than $\frac{\log(\frac{K}{S} d^n)}{\log(\frac{u}{d}))}$. $j$, the random value of the sum, has the mean $n p$ and the standard deviation $\sqrt{n p (1 - p)}$, thus:
+\begin{equation}\label{eq:A2.3}
+    1 - \phi(a; n, p) = Prob[j \le a - 1] = Prob\left[\frac{j - n p}{\sqrt{n p (1 - p)}} \le \frac{a - 1 - n p}{\sqrt{n p (1 - p)}}\right]
+\end{equation}
+
+We need to modify \ref{eq:A2.2a} and \ref{eq:A2.2b}, since we now consider a stock, where \ref{eq:11} holds, with the probability p instead of q:
+\begin{gather}
+    \sigma_p^2 = p (1 - p) [\log(\frac{u}{d})]^2 \\
+    \mu_p = p \log(\frac{u}{d}) + \log d 
+\end{gather}
+Using $\sigma_p, \mu_p$ and formula \ref{eq:11}, we get \ref{eq:15} and can set the following:
+\begin{equation}\label{eq:A2.4}
+    \frac{j - n p}{\sqrt{n p (1 - p)}} = \frac{\log(S^* / S) - \mu_p n}{\sigma_p n^{0.5}}
+\end{equation}
+From previously we can define $a - 1$ as:
+\begin{equation}
+    a - 1 = \frac{\log(K / S d^n)}{\log(\frac{u}{d})} - \epsilon = \frac{\frac{\log(\frac{K}{S})}{n \log(d)}}{\log(\frac{u}{d})} - \epsilon
+\end{equation}
+Using the formula from above we create the following equality from \ref{eq:A2.3}:
+\begin{equation}\label{eq:A2.5}
+    \frac{a - 1 - n p}{\sqrt{n p (1 - p)}} = \frac{\log(\frac{K}{S}) - \mu_p n - \epsilon \log(\frac{u}{d})}{\sigma_p n^{0.5}}
+\end{equation}
+Now we can use \ref{eq:A2.4} and \ref{eq:A2.5} to express \ref{eq:A2.3} as:
+\begin{equation}\label{eq:A2.6}
+    1 - \phi(a; n, p) = Prob\left[\frac{\log(\frac{S^*}{S}) - \mu_p n}{\sigma_p n^{0.5}} \le \frac{\log(\frac{K}{S}) - \mu_p n - \epsilon \log(\frac{u}{d})}{\sigma_p n^{0.5}}\right]
+\end{equation}
+The central limit theorem can now be applied to \ref{eq:A2.6}. Thus if \ref{eq:A2.7a} holds, which it does due to \ref{eq:A2.7b}, then we can use the central limit theorem to get \ref{eq:A2.7c}:\\
+
+As $n \rightarrow \inf$:\begin{gather}
+    \frac{p |\log u - \mu_p|^3 + (1 - p)|\log d - \mu_p|^3}{\sigma_p n^{0.5}} = \frac{(1 - p)^2 + p^2}{n p (1 - p)^{0.5}} \rightarrow 0\label{eq:A2.7a}\\
+    p \rightarrow \frac{1}{2} + \frac{1}{2}\frac{\log r - \frac{1}{2}\sigma^2}{\sigma}\sqrt{\frac{t}{n}}\label{eq:A2.7b}\\
+    1 - \phi(a; n, p) \rightarrow N(z) = N\left(\frac{\log{\frac{K r^{-t}}{S}}}{\sigma t^{0.5}} + \frac{1}{2} \sigma t^{0.5}\right)\label{eq:A2.7c}
+\end{gather}
+From the result of \ref{eq:A2.7c} we evaluate $\mu_p n$, $\sigma_p^2n$ and $\log{\frac{u}{d}}$ as $n \rightarrow \inf$. This results in $\mu_p n \rightarrow (\log r - \frac{1}{2}\sigma^2) * t$, $\sigma_p^2n \rightarrow \sigma t^{0.5}$ and $\log{\frac{u}{d}} \rightarrow 0$. (Something surprising is that $p \not= q$ and therefore $mu_p \not= \mu$ and $\sigma_p \not= \sigma$)
+
+Since $1 - N(z) = N(-z)$, we can conclude the proof of convergence with:
+\begin{equation}\label{eq:A2.8}
+    \phi(a; n, p) \rightarrow N(-z) = N\left(\frac{\log{\frac{S}{k r^{-t}}}}{\sigma t^{0.5}} - \frac{1}{2} \sigma\right) = N(x - \sigma t^{0.5})
+\end{equation}
+
+\section{Black-Scholes Model}
+
+\subsection{Applying Ito's lemma to the $\ln$ of the stock price}
+Note: This is only here for context and for those who want to understand BSM at a bit more fundamental level.\newline
+
+Previously we used formula \ref{eq:19} and here we'll see how we can get there by applying Ito's lemma to derive the process followed by $\ln S$. So we set:
+\begin{equation}
+    G = \ln S
+\end{equation}
+Now we calculate partial derivatives of $G$:
+\begin{gather}
+    \frac{\partial G}{\partial S} = \frac{1}{S}\\
+    \frac{\partial^2 G}{\partial^2 S} = -\frac{1}{S^2}\\
+    \frac{\partial G}{\partial t} = 0
+\end{gather}
+By putting the results from the partial derivatives of G into \ref{eq:30}, we obtain:
+\begin{equation}\label{eq:B1.1}
+    dG = (\mu - \frac{\sigma^2}{2}) dt + \sigma dz
+\end{equation}
+The result implies that $G$ follows a Wiener process, which is generalized. Naturally it's drift rate is:
+\begin{equation}
+    \mu - \frac{\sigma^2}{2}
+\end{equation}
+and its variance:
+\begin{equation}
+    \sigma^2
+\end{equation}
+This might be interesting, but it truly becomes handy when we want to observe the change in G between time zero and a future time $T$. Due to it being normally distributed, we get that the mean at time $T$ is:
+\begin{equation}
+    (\mu - \frac{\sigma^2}{2}) T
+\end{equation}
+and it's variance at time $T$ is:
+\begin{equation}
+    \sigma^2 T
+\end{equation}
+Thus we get from \ref{eq:B1.1} and our knowledge of the nature of G that the difference between $S_0$ and $S_T$ is:
+\begin{equation}
+    \ln S_T - \ln S_0 ~ \phi\left((\mu - \frac{\sigma^2}{2}) T, \sigma^2 T\right)
+\end{equation}
+which can be rewritten in the form (this is the same as \ref{eq:21}):
+\begin{equation}
+    \ln{\frac{S_T}{S_0}} ~ \phi\left((\mu - \frac{\sigma^2}{2}) T, \sigma^2 T\right)
+\end{equation}
+By applying Ito's lemma to $G = \ln S$, we derived formula \ref{eq:21}, which we easily can change into \ref{eq:19}. I hope that this is sufficient and helps to understand the BSM better.
+
+\subsection{Differential equation for stock price with known dividend yield}
+If the stock pays a dividend $q$, we have that $\mu = r - q$ otherwise there wouldn't be risk neutrality. We follow the same process (with Ito's lemma and the set up of the portfolio) mentioned above until after formula \ref{eq:36}. The portfolio holder earns capital equal to $\Delta\Pi$ and dividends on the stock, which equals to:
+\begin{equation}\label{eq:B2.1}
+    q S \frac{\partial f}{\partial S} * \Delta t
+\end{equation}
+We now use \ref{eq:B2.1} to define $\delta W$, the portfolio holders change in wealth during time $\delta t$:
+\begin{equation}\label{eq:B2.2}
+    \Delta W = \left[-\frac{\partial f}{\partial t} - \frac{\partial^2 f}{2 \partial S^2} * \sigma^2 S^2 + q S \frac{\partial f}{\partial S} \right] \Delta t
+\end{equation}
+The equation \ref{eq:B2.2} essentially responds to \ref{eq:36} $+$ \ref{eq:B2.1}. So we conclude that \ref{eq:35} doesn't hold in this particular case, since $\Delta W$ is our "new" $\Delta \Pi$:
+\begin{equation}\label{eq:B2.3}
+    \Delta W = r \Pi \Delta t
+\end{equation}
+Now we see that plugging \ref{eq:B2.2} and (the first formula in) \ref{eq:34} into \ref{eq:B2.3} results in the following:
+\begin{equation}
+    \left[-\frac{\partial f}{\partial t} - \frac{\partial^2 f}{2 \partial S^2} * \sigma^2 S^2 + q S \frac{\partial f}{\partial S} \right] \Delta t = r \left(-f + \frac{\partial f}{\partial S} * S\right) \Delta t
+\end{equation}
+Simplifying to:
+\begin{equation}\label{eq:B2.4}
+    \frac{\partial f}{\partial t} + (r - q) S * \frac{\partial f}{\partial S} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 f}{2 \partial S^2} = r f
+\end{equation}
+See the similarity between \ref{eq:B2.4} and \ref{eq:37}.
+
+\subsection{Adjust input parameters to handle dividends}
+The stock price of a firm can be split into two parts, a riskless component and a risky component (the rest). When the option has matured, all dividend will have been payed and this riskless component won't exist any longer, thus it doesn't affect the volatility. Therefore we just need to discount the stock price by the sum of the present value of all dividends payed during the options life time. Thus in "pseudo" math, we have: \newline\newline
+$S_0 = P - \sum d_i e^{t_i r}$, where $d_i = i$:th dividend amount and $t_i = $ Time until $d_i$ is paid\newline\newline
+After this we just need to calculate \ref{eq:38} to get the value of a European dividend paying call/put option.
+
+\subsection{Derivation of pricing formula for European warrants issued by firm on its own stock}
+The firm has $M$ outstanding European warrants and $N$ outstanding shares. Due to the share dilution caused by warrants we have after exercise $N + M \gamma$, where $\gamma$ is the amount of shares per warrant. The firms equoty also increases after exercise to $V_T + M \gamma X$, where company equity, including warrants at time $T$ is $V_T$. Thus the share price directly after exercise becomes:
+\begin{equation}
+    \frac{V_T + M \gamma X}{N + M \gamma}
+\end{equation}
+The warrant pay off if it is exercised corresponds to:
+\begin{equation}
+    \frac{N \gamma}{N + M \gamma} * \max\left(\frac{V_T}{N} - X, 0\right)
+\end{equation}
+From this we conclude:
+\begin{equation}
+    V_0 = S_0 + \frac{M W}{N}
+\end{equation}
+Now we just have to plug everything into \ref{eq:38}
+
+\section{Merton's Jump-Diffusion Model}
+\subsection{Applying the Black Scholes method to Merton's Jump-Diffusion Model}
+When trying to apply the Black Scholes analysis to the portfolio we have to set $\lambda = 0$ (thus setting $dq = dq_w = 0$) and the portfolio return could be made by picking $W_1 = w_1^{*}$ and $w_2 = w_2^{*}$ so that $w_1 \sigma + w_2 \sigma_w = 0$. Then the returns must be equal to $r$, the risk free rate. Using these assumptions we conclude with the help of formula \ref{eq:49}:
+\begin{equation}
+    \frac{a - r}{\sigma} = \frac{a_w - r}{\sigma_w}
+\end{equation}
+With the equation above and (the first equality of) \ref{eq:47} with $\lambda = 0$, we arrive at the Black Scholes differential equation:
+\begin{equation}
+    \frac{1}{2} \sigma^2 S^2 F''_{SS} + r S F'_S - r F + F'_t
+\end{equation}
+Important to note is that this does however *not* hold when $\lambda \not= 0$, due to the jump process. From the last equation in \ref{eq:49} we can conclude that there are no portfolio weights ($w_1$, $w_2$) that could eliminate the jump risk. Thus if $Y$ has positive dispersion, then for any $w_1$ and $w_2$, $Y_p - 1$ will take on non-zero values for some possible values of $Y$. Trying to sue the Black Scholes hedge also won't work due to this formula already being continuous in time.\\
+We can try to find the return characteristics with the Black Scholes hedge, this portfolio $P^{*}$ will be the following:\\
+\newline If the Poisson process doesn't occur:
+\begin{equation}
+    \frac{dP^{*}}{P^{*}} = (a_p^{*} - \lambda k_p^{*}) dt
+\end{equation}
+If the Poisson process doesn't occur:
+\begin{equation}
+    \frac{dP^{*}}{P^{*}} = (a_p^{*} - \lambda k_p^{*}) dt + Y_{p^{*}}
+\end{equation}
+\newline From this we can conclude that the portfolio price is predictable most of the time, except when once every $\frac{1}{\lambda}$ on average, where the portfolio value will jump. To further continue this route we use the second equation in \ref{eq:47} and the last equation in \ref{eq:49} to get:
+\begin{equation}\label{eq:C1.1}
+    Y_{p^{*}} - 1 = w_2 \frac{F(S Y, t) - F(S, t) - F'_S(S, t) (S Y - S)}{F(S, t)}
+\end{equation}
+The formula above gives by the strict convexity of the option price in the stock price that $F(S Y, t) - F(S, t) - F'_S(S, t) (S Y - S)$ is positive for every value of Y. So if $w_2^{*}$ is positive then $Y_{p^{*}}$ will be positive and the unanticipated return on the hedge will always be positive.\\
+From this we can conclude that investors buy the stock and short the options will gain money on average, except for when a jump occurs and vice versa. This explains the nature of options, since most of them expire worthless and when they don't they often achieve great returns.
+
+\subsection{Verifying that \ref{eq:54} is a solution to \ref{eq:52}}
+In order to verify that \ref{eq:54} is a solution to \ref{eq:52} with the boundary conditions $F(0, \tau) = 0$ and $F(S, 0) = \max(0, S - E)$ (as mentioned under \ref{eq:50}), we'll rewrite \ref{eq:54}:
+\begin{gather}
+    F(S, \tau) = \sum_{n=0} ^{\infty} P_n(\tau) * \epsilon_n(W(V_n, \tau; E, \sigma^2, r))\\
+    P_n(\tau) = e^{-\lambda \tau} \frac{(\lambda \tau)^n}{n!}\\
+    V_n = S X_n e^{-\lambda \tau}
+\end{gather}
+Now we differentiate the formula above:
+\begin{gather}
+    S F'_S(S, \tau) = \sum_{n=0}^{\infty} P_n(\tau) \epsilon_n(V_n W_1) \label{eq:C2.1}\\
+    S^2 F''_{SS}(S, \tau) = \sum_{n=0}^{\infty} P_n(\tau) \epsilon_n(V_n^2 W_{11}) \label{eq:C2.2}
+\end{gather}
+Continuing with:
+\begin{equation}\label{eq:C2.3}
+    F'_{\tau}(S, \tau) = - \lambda F - \lambda k \sum_{n=0}^{\infty} P_n(\tau) \epsilon_n(V_n W_1) + \sum_{n=0}^{\infty} P_n(\tau) \epsilon_n(W_2) + \lambda \sum_{n=1}^{\infty} \frac{(\lambda t)^{n-1} e^{-\lambda \tau}}{(n - 1)!} \epsilon_n(V_n W_2)
+\end{equation}
+We continue to simplify \ref{eq:C2.3} by substituting \ref{eq:C2.1} and setting m = n - 1
+\begin{equation}\label{C2.3.1}
+    F'_{\tau} = - \lambda F - \lambda k S F'_{S} + \sum_{n=0}^{\infty} P_n(\tau) \epsilon_n(W_2) + \lambda \sum_{m=0}^{\infty} P_m(\tau) \epsilon_{m+1}(W(V_{m+1}, \tau; E, \sigma^2, r))
+\end{equation}
+Finally we have the expression:
+\begin{equation}\label{eq:C2.4}
+    \epsilon_y(F(S, Y, \tau)) = \epsilon_y\left(\sum_{n=0}^{\infty} P_n(\tau) \epsilon_n(W(V_n Y, \tau; E, \sigma^2, r))\right)
+\end{equation}
+Which we can further simplify because of the definition of $X_n$, $X_{n+1}$ and $Y X_n$ are identically distributed and thus $\epsilon_y * \epsilon_n$ applied to $Y X_n$ is the same as $\epsilon_{n+1}$ applied to the same function $X_{n+1}$ substituted for $Y X_n$:
+\begin{equation}\label{C2.4.1}
+    \epsilon_y(F(S, Y, \tau)) = \sum_{n=0}^{\infty} P_n(\tau) \epsilon_{n+1}(W(V_{n+1} Y, \tau; E, \sigma^2, r))
+\end{equation}
+From the modified version of \ref{eq:54} (our first formula in the section) to \ref{C2.4.1}, we have:
+\begin{multline}\label{eq:C2.5}
+    \frac{1}{2} \sigma^2 S^2 F''_{SS} + (r - \lambda k) S F'_S - F'_{\tau} - r F =\\
+    \sum_{n=0}^{\infty} P_n(\tau) \epsilon_n\left(\frac{1}{2} \sigma^2 V_n^2 W_{11} + r V_n W_1 - W_2 - r W\right) - \lambda k S F'_S + \lambda F + \lambda k S F'_S - \lambda \sum_{m=0}^{\infty} P_m(\tau) \epsilon_{m+1}(W(V_{m+1}, \tau; E, \sigma^2, r))\\
+    = - \lambda(\epsilon_y(F(S Y, \tau) - F(S, \tau)))
+\end{multline}
+Since W satisfies the BSM differential equation, therefore for each $n$ we have:
+\begin{equation}
+    \frac{1}{2} \sigma^2 V_n^2 W_{11} + r V_n W_1 - W_2 - r W = 0
+\end{equation}
+From this follows that $F(S, \tau)$ satisfies \ref{eq:52}. For whatever $n$, $S = 0$ implies $V_n = 0$ and due to \ref{eq:53} we have $W(0, \tau: E, \sigma^2, r) = 0$ so the first boundary is satisfied (since $F(0, \tau) = 0$ in this case). \ref{eq:52} also gives:
+\begin{equation}\label{eq:C2.6}
+    \epsilon_n(W(V_n, 0; E, \sigma^2, r)) = \epsilon_n(\max(0, V_n - E)) \le \epsilon_n(V_n) = S(1 + k)^n
+\end{equation}
+Utilizing \ref{eq:C2.6}:
+\begin{multline}\label{eq:C2.7}
+    \lim{\tau \to 0} \sum_{n=1}^{\infty} P_n(\tau) \epsilon_n(W) \le \lim{\tau \to 0} \sum_{n=1}^{\infty} \frac{S e^{- \lambda \tau} [(1 + k)\lambda \tau]^n}{n!}\\
+    = \lim{\tau \to 0} S e^{- \lambda \tau} (e^{(1+k)\lambda\tau}-1) \\
+    = 0
+\end{multline}
+\ref{eq:C2.7} can then be used to prove that \ref{eq:54} satisfies the last bound $F(S, 0) = \max(0, S - E)$:
+\begin{equation}\label{eq:C2.8}
+    \lim{\tau \to 0} F(S, \tau) = \lim{\tau \to 0} P_0(\tau) \epsilon(W(V_0, \tau; E, \sigma^2, r)) = \max(0, S - E)
+\end{equation}
 \end{document}
